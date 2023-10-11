@@ -7,9 +7,11 @@ import os
 app = Flask(__name__)
 password = os.environ['POSTGRES_PASSWORD']
 
+
 @app.route('/')
 def hello_world():
     return 'Hello, Docker!'
+
 
 @app.route('/widgets')
 def get_widgets():
@@ -23,25 +25,22 @@ def get_widgets():
 
     cursor.execute("SELECT * FROM widgets")
 
-    row_headers=[x[0] for x in cursor.description]
+    row_headers = [x[0] for x in cursor.description]
 
     results = cursor.fetchall()
-    json_data=[]
+    json_data = []
     for result in results:
-        json_data.append(dict(zip(row_headers,result)))
+        json_data.append(dict(zip(row_headers, result)))
 
     cursor.close()
     conn.close()
 
     return json.dumps(json_data)
 
+
 @app.route('/initdb')
 def db_init():
-    conn = psycopg2.connect(
-        host="db",
-        user="postgres",
-        password=password,
-    )
+    conn = psycopg2.connect(host="db", user="postgres", password=password)
     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 
     cursor = conn.cursor()
@@ -53,12 +52,7 @@ def db_init():
     conn.commit()
     conn.close()
 
-    conn = psycopg2.connect(
-    host="db",
-    user="postgres",
-    password=password,
-    database="example"
-    )
+    conn = psycopg2.connect(host="db", user="postgres", password=password, database="example")
     cursor = conn.cursor()
 
     cursor.execute("DROP TABLE IF EXISTS widgets")
@@ -71,4 +65,4 @@ def db_init():
     return 'init database'
 
 if __name__ == "__main__":
-    app.run(host ='0.0.0.0')
+    app.run(host='0.0.0.0')

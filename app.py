@@ -61,6 +61,7 @@ def db_init():
     cursor.close()
     conn.commit()
     conn.close()
+    
     return 'init database'
 
 if __name__ == "__main__":
